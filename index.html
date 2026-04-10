@@ -1,0 +1,734 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Get Joy Offer Modeler — GrowthShop</title>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box;}
+:root{
+  --g900:#021508;--g800:#063B18;--g700:#0A5C26;--g600:#0D7B33;
+  --g500:#10A044;--g400:#2DC460;--g300:#72DD96;--g200:#B3EEC8;
+  --g100:#DCF7E7;--g50:#EEF9F3;
+  --r500:#E53535;--r100:#FDEAEA;--r600:#C0221E;
+  --a600:#B86200;--a100:#FFF0D1;--a300:#F5C842;
+  --t1:#07150B;--t2:#2E5C3A;--t3:#7A9E85;--t4:#B5CEBA;
+  --bdr:#C8E0CF;--bdr2:#E2F0E5;
+  --bg:#EBF5EE;--surf:#FFFFFF;--surf2:#F4FAF6;
+  --f:'Poppins',sans-serif;
+}
+html,body{height:100%;overflow:hidden;}
+body{font-family:var(--f);background:var(--bg);color:var(--t1);font-size:12px;}
+
+/* HEADER */
+.hdr{height:44px;background:var(--g800);display:flex;align-items:center;justify-content:space-between;padding:0 16px;flex-shrink:0;}
+.hdr-l{display:flex;align-items:center;gap:10px;}
+.hdr-logo{width:28px;height:28px;border-radius:7px;background:var(--g500);display:flex;align-items:center;justify-content:center;}
+.hdr-logo svg{width:15px;height:15px;}
+.hdr-t{font-size:13px;font-weight:700;color:#fff;}
+.hdr-s{font-size:10px;color:var(--g300);font-weight:400;margin-left:2px;}
+.hdr-r{display:flex;align-items:center;gap:8px;}
+.hdr-by{font-size:10px;color:var(--g300);font-weight:600;letter-spacing:.05em;}
+.csv-btn{font-size:10px;font-weight:600;font-family:var(--f);padding:4px 10px;border-radius:4px;border:1px solid var(--g400);background:rgba(255,255,255,.07);color:var(--g200);cursor:pointer;transition:all .15s;display:flex;align-items:center;gap:5px;}
+.csv-btn:hover{background:var(--g600);border-color:var(--g400);}
+.csv-badge{font-size:9px;background:var(--g400);color:var(--g900);padding:1px 5px;border-radius:2px;font-weight:700;}
+#csv-input{display:none;}
+
+/* LAYOUT */
+.layout{display:grid;grid-template-columns:1fr 1fr;height:calc(100vh - 44px);overflow:hidden;}
+.left{border-right:1px solid var(--bdr);background:var(--surf);overflow-y:auto;display:flex;flex-direction:column;}
+.right{overflow-y:auto;padding:12px 14px;display:flex;flex-direction:column;gap:10px;background:var(--bg);}
+
+/* SECTION */
+.sec{padding:6px 13px;background:var(--surf2);border-bottom:1px solid var(--bdr2);border-top:1px solid var(--bdr2);display:flex;align-items:center;justify-content:space-between;flex-shrink:0;}
+.sl{font-size:9px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--t3);}
+.sh{font-size:9px;color:var(--t3);}
+.clr{font-size:9px;background:none;border:1px solid var(--bdr);padding:2px 7px;border-radius:3px;cursor:pointer;color:var(--t3);font-family:var(--f);font-weight:600;transition:all .15s;}
+.clr:hover{border-color:var(--r500);color:var(--r500);}
+
+/* CARDS */
+.card{background:var(--surf);border:1px solid var(--bdr);border-radius:8px;overflow:visible;}
+.card-inner{border-radius:8px;overflow:hidden;}
+.ch{padding:8px 13px;background:var(--surf2);border-bottom:1px solid var(--bdr2);font-size:9px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--t3);display:flex;align-items:center;justify-content:space-between;}
+
+/* INPUTS */
+input[type=number],input[type=text]{font-family:var(--f);font-size:11px;border:1px solid var(--bdr);border-radius:4px;padding:3px 6px;background:var(--surf);color:var(--t1);width:100%;transition:border .15s;font-weight:500;}
+input:focus{outline:none;border-color:var(--g500);}
+select{font-family:var(--f);font-size:11px;border:1px solid var(--bdr);border-radius:4px;padding:3px 6px;background:var(--surf);color:var(--t1);font-weight:500;}
+select:focus{outline:none;border-color:var(--g500);}
+.rst{background:none;border:none;cursor:pointer;color:var(--t4);font-size:13px;padding:0 3px;border-radius:3px;transition:all .15s;flex-shrink:0;}
+.rst:hover{color:var(--g600);background:var(--g50);}
+.xb{background:none;border:none;cursor:pointer;color:var(--t4);font-size:15px;padding:0 3px;border-radius:3px;transition:all .15s;flex-shrink:0;line-height:1;}
+.xb:hover{color:var(--r500);background:var(--r100);}
+
+/* OFFER TABLE */
+.oh{display:grid;grid-template-columns:1fr 42px 68px 68px 22px 22px;gap:3px;padding:4px 12px;background:var(--surf2);border-bottom:1px solid var(--bdr2);}
+.oh span{font-size:9px;font-weight:700;letter-spacing:.07em;text-transform:uppercase;color:var(--t3);}
+.oh .r{text-align:right;}
+.or{display:grid;grid-template-columns:1fr 42px 68px 68px 22px 22px;gap:3px;align-items:center;padding:6px 12px;border-bottom:1px solid var(--bdr2);}
+.or:last-child{border-bottom:none;}
+.sn{font-size:11px;font-weight:600;color:var(--t1);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.sc{font-size:9px;color:var(--t3);margin-top:1px;font-weight:400;}
+.ct{display:inline-block;font-size:8px;padding:1px 4px;border-radius:2px;margin-left:3px;font-weight:700;}
+.ct-FFD{background:var(--g100);color:var(--g700);}
+.ct-Treats{background:#FEF3C7;color:#92400E;}
+.ct-Supplements{background:#EDE9FE;color:#5B21B6;}
+.ct-FreshFrozen{background:#E0F2FE;color:#0369A1;}
+.oe{padding:22px;text-align:center;color:var(--t3);font-size:11px;font-weight:500;}
+.src-tag{font-size:8px;color:var(--g600);font-weight:600;}
+
+/* SHIP/CAC */
+.scr{display:grid;grid-template-columns:1fr 74px 22px;gap:4px;align-items:center;padding:7px 12px;border-bottom:1px solid var(--bdr2);}
+.sl2{font-size:11px;font-weight:600;color:var(--t1);}
+.ss{font-size:9px;color:var(--t3);margin-top:1px;}
+
+/* LIBRARY */
+.lib-search{padding:6px 12px;border-bottom:1px solid var(--bdr2);}
+.lib-search input{font-size:11px;padding:5px 8px;border-radius:4px;}
+.lib-cats{padding:6px 12px 4px;display:flex;gap:5px;flex-wrap:wrap;border-bottom:1px solid var(--bdr2);}
+.cat-btn{font-size:9px;font-weight:700;padding:2px 8px;border-radius:3px;border:1px solid var(--bdr);cursor:pointer;background:var(--surf);color:var(--t3);font-family:var(--f);transition:all .15s;}
+.cat-btn:hover,.cat-btn.on{border-color:var(--g400);color:var(--g700);background:var(--g50);}
+.lib-grid{padding:8px 12px;display:flex;flex-wrap:wrap;gap:5px;}
+.chip{display:flex;align-items:center;gap:4px;border:1.5px solid var(--bdr);border-radius:5px;padding:4px 8px;cursor:pointer;transition:all .15s;font-size:10px;font-weight:600;color:var(--t2);user-select:none;background:var(--surf);}
+.chip:hover{border-color:var(--g400);background:var(--g50);}
+.chip.on{background:var(--g500);border-color:var(--g500);color:#fff;}
+.chip .cp{font-size:9px;color:var(--t3);font-weight:400;}
+.chip.on .cp{color:rgba(255,255,255,.65);}
+
+/* OPEX */
+.opx{padding:8px 12px;display:flex;flex-direction:column;gap:5px;}
+.ox{display:grid;grid-template-columns:1fr 78px 22px;gap:4px;align-items:center;}
+.ol{font-size:11px;font-weight:500;color:var(--t1);}
+.os{font-size:9px;color:var(--t3);margin-top:1px;}
+.pw{display:flex;align-items:center;gap:2px;}
+.pw input{width:56px;}
+.ps{font-size:10px;color:var(--t3);font-weight:600;}
+
+/* PAYBACK TABS */
+.pb-row{padding:7px 12px;display:flex;align-items:center;gap:6px;border-bottom:1px solid var(--bdr2);}
+.pb-row label{font-size:11px;font-weight:600;color:var(--t1);white-space:nowrap;min-width:90px;}
+.pb-tabs{display:flex;gap:3px;}
+.pbt{font-size:10px;font-weight:700;padding:3px 9px;border-radius:4px;border:1.5px solid var(--bdr);cursor:pointer;color:var(--t3);background:var(--surf);transition:all .15s;font-family:var(--f);}
+.pbt:hover{border-color:var(--g400);color:var(--g700);}
+.pbt.on{background:var(--g500);border-color:var(--g500);color:#fff;}
+
+/* REPEAT CM - removed */
+
+/* ASSUMPTIONS */
+.asump{padding:10px 14px;display:flex;flex-direction:column;gap:0;}
+.ar{display:grid;grid-template-columns:1fr 1fr;gap:12px;align-items:baseline;padding:7px 0;border-bottom:1px solid var(--bdr2);}
+.ar:last-child{border-bottom:none;}
+.ak{font-size:11px;color:var(--t1);font-weight:600;display:flex;align-items:center;gap:4px;flex-wrap:wrap;}
+.av{font-size:11px;color:var(--t3);font-weight:400;line-height:1.5;}
+.atog{font-size:9px;color:var(--g600);cursor:pointer;font-weight:600;padding:1px 6px;border-radius:3px;border:1px solid var(--g200);background:var(--g50);}
+.atog:hover{background:var(--g100);}
+.asump-group-lbl{font-size:9px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--g600);background:var(--g50);padding:5px 0;margin:6px 0 2px;border-top:1px solid var(--g200);}
+.asump-group-lbl:first-child{border-top:none;margin-top:0;}
+.aflag{font-size:8px;font-weight:700;padding:1px 5px;border-radius:2px;margin-left:2px;vertical-align:middle;white-space:nowrap;}
+.aflag.red{background:#FDEAEA;color:#C0221E;}
+.aflag.orange{background:#FFF0D1;color:#B86200;}
+
+/* ═══ SUMMARY CARD ═══ */
+.sum{background:var(--g800);border-radius:9px;overflow:hidden;}
+.sum-top{background:var(--g900);padding:10px 14px;display:flex;align-items:flex-start;justify-content:space-between;}
+.sum-brand{display:flex;align-items:center;gap:8px;}
+.sum-dot{width:7px;height:7px;border-radius:50%;background:var(--g400);}
+.sum-tl .t1{font-size:9px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--g300);}
+.sum-tl .t2{font-size:12px;font-weight:700;color:#fff;margin-top:1px;}
+.snm{background:none;border:none;border-bottom:1px dashed rgba(255,255,255,.2);color:#fff;font-size:12px;font-weight:700;font-family:var(--f);width:190px;padding:0 0 2px;}
+.snm:focus{outline:none;border-bottom-color:var(--g300);}
+.sum-dt{font-size:9px;color:var(--g300);font-weight:500;}
+
+.sum-skus{padding:8px 14px;display:flex;flex-wrap:wrap;gap:4px;border-bottom:1px solid rgba(255,255,255,.08);}
+.sp{background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.12);border-radius:4px;padding:4px 9px;font-size:10px;font-weight:600;color:#fff;}
+.sp.main{background:var(--g600);border-color:var(--g500);}
+.sp-empty{font-size:11px;color:rgba(255,255,255,.25);}
+
+.sum-mets{display:grid;grid-template-columns:1fr 1px 1fr;border-bottom:1px solid rgba(255,255,255,.08);}
+.sdiv{background:rgba(255,255,255,.1);}
+.sm{padding:13px 14px;text-align:center;}
+.sml{font-size:9px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--g300);margin-bottom:5px;}
+.smv{font-size:30px;font-weight:700;color:#fff;line-height:1;}
+.smv.pos{color:var(--g300);}
+.smv.neg{color:#FCA5A5;}
+.smv.amr{color:#FCD34D;}
+.sms{font-size:10px;color:rgba(255,255,255,.4);margin-top:3px;font-weight:400;}
+
+.sum-bar{padding:9px 14px 11px;border-bottom:1px solid rgba(255,255,255,.08);}
+.sb-lbl{font-size:9px;font-weight:700;letter-spacing:.07em;text-transform:uppercase;color:var(--g300);margin-bottom:5px;display:flex;justify-content:space-between;}
+.sb-trk{height:5px;background:rgba(255,255,255,.1);border-radius:3px;overflow:hidden;}
+.sb-fill{height:100%;border-radius:3px;transition:width .4s ease;}
+.sb-tks{display:flex;justify-content:space-between;margin-top:4px;}
+.sb-tk{font-size:8px;color:rgba(255,255,255,.25);font-weight:600;}
+.sb-tk.hi{color:var(--g300);}
+
+.sum-ft{padding:7px 14px;display:flex;justify-content:space-between;align-items:center;}
+.sfl{font-size:9px;color:rgba(255,255,255,.35);font-weight:400;}
+.sfr{font-size:9px;color:var(--g300);font-weight:700;letter-spacing:.05em;}
+
+/* WATERFALL */
+.wr{display:flex;align-items:center;justify-content:space-between;padding:5px 13px;border-bottom:1px solid var(--bdr2);}
+.wr:last-child{border-bottom:none;}
+.wl{font-size:11px;color:var(--t2);font-weight:500;display:flex;align-items:center;gap:4px;}
+.wl.ind{padding-left:13px;font-weight:400;}
+.wv{font-size:12px;font-weight:600;}
+.wr.sub{background:var(--surf2);}
+.wr.sub .wl{font-weight:700;color:var(--t1);}
+.wr.sub .wv{font-size:13px;}
+.wr.tot{background:var(--g800);border-radius:0 0 8px 8px;}
+.wr.tot .wl{color:#fff;font-weight:700;font-size:12px;}
+.wr.tot .wv{font-size:15px;}
+.wd{height:1px;background:var(--bdr2);}
+.bdg{font-size:9px;font-weight:700;padding:1px 5px;border-radius:3px;}
+.bp{background:var(--g100);color:var(--g700);} .bn{background:var(--r100);color:var(--r600);} .ba{background:var(--a100);color:var(--a600);}
+.pos{color:var(--g600);}.neg{color:var(--r600);}.amr{color:var(--a600);}
+.wr.tot .pos{color:var(--g300);}.wr.tot .neg{color:#FCA5A5;}
+
+/* COHORT */
+.coh{padding:9px 13px 11px;}
+.chl{font-size:10px;color:var(--t3);margin-bottom:7px;display:flex;flex-direction:column;gap:3px;}
+.chc{display:flex;align-items:flex-end;gap:3px;height:56px;}
+.cbw{flex:1;display:flex;flex-direction:column;align-items:center;gap:2px;}
+.cb{width:100%;border-radius:2px 2px 0 0;min-height:3px;transition:background .3s;}
+.cm{font-size:8px;color:var(--t3);font-weight:500;}
+
+/* SCROLLBAR */
+.left::-webkit-scrollbar,.right::-webkit-scrollbar{width:4px;}
+.left::-webkit-scrollbar-thumb,.right::-webkit-scrollbar-thumb{background:var(--bdr);border-radius:2px;}
+
+</style>
+</head>
+<body>
+
+<div class="hdr">
+  <div class="hdr-l">
+    <div class="hdr-logo">
+      <svg viewBox="0 0 14 14" fill="none"><circle cx="7" cy="7" r="5" stroke="#fff" stroke-width="1.5"/><path d="M4.5 7.5C5 8.5 6 9 7 9s2-.5 2.5-1.5" stroke="#fff" stroke-width="1.2" stroke-linecap="round"/></svg>
+    </div>
+    <div>
+      <div class="hdr-t">Get Joy Offer Modeler</div>
+      <div class="hdr-s">All SKUs · COGS from IS-DTC financials · Cohort LTV Apr 2025–Mar 2026</div>
+    </div>
+  </div>
+  <div class="hdr-r">
+    <button class="csv-btn" onclick="document.getElementById('csv-input').click()">
+      ↑ Refresh from Shopify CSV <span class="csv-badge" id="csv-badge">defaults</span>
+    </button>
+    <input type="file" id="csv-input" accept=".csv" onchange="loadCSV(this)">
+    <span class="hdr-by">by GrowthShop</span>
+  </div>
+</div>
+
+<div class="layout">
+
+<!-- ══ LEFT ══ -->
+<div class="left">
+
+  <div class="sec" style="border-top:none;">
+    <span class="sl">Active Offer</span>
+    <button class="clr" onclick="clearOffer()">Clear all</button>
+  </div>
+  <div class="oh">
+    <span>SKU</span><span class="r">Qty</span>
+    <span class="r">Price $</span><span class="r">COGS $</span>
+    <span></span><span></span>
+  </div>
+  <div id="off-list"><div class="oe">Select SKUs from the library below.</div></div>
+
+  <!-- SHIP + CAC -->
+  <div>
+    <div class="scr">
+      <div><div class="sl2">Shipping charged</div><div class="ss">CSV avg $9.14 · most orders $9.99</div></div>
+      <input type="number" id="shipChg" value="9.99" step="0.01" oninput="recalc()" style="text-align:right;">
+      <button class="rst" onclick="R('shipChg',9.99)">↺</button>
+    </div>
+    <div class="scr" style="border-bottom:none;">
+      <div style="display:flex;align-items:center;gap:6px;">
+        <div><div class="sl2">CAC</div><div class="ss">Acquisition cost per customer</div></div>
+        <select id="cacCh"><option>Meta</option><option>Google</option><option>Email</option><option>Organic</option></select>
+      </div>
+      <input type="number" id="cac" value="150" step="1" oninput="recalc()" style="text-align:right;">
+      <button class="rst" onclick="R('cac',150)">↺</button>
+    </div>
+    <div class="scr" style="border-bottom:none;">
+      <div>
+        <div class="sl2">Repeat order AOV <span style="font-size:9px;font-weight:400;color:var(--g600);">post-trial</span></div>
+        <div class="ss">What customers pay on repeat/subscription · ↺ syncs to offer price</div>
+      </div>
+      <input type="number" id="repeatAOV" value="26.96" step="0.01" oninput="recalc()" style="text-align:right;">
+      <button class="rst" onclick="syncRepeatAOV()" title="Sync to offer price">↺</button>
+    </div>
+  </div>
+
+  <!-- PAYBACK -->
+  <div class="sec"><span class="sl">Target Payback Period</span></div>
+  <div class="pb-row">
+    <label>Months target</label>
+    <div class="pb-tabs">
+      <button class="pbt" onclick="setPB(1)">1</button>
+      <button class="pbt" onclick="setPB(2)">2</button>
+      <button class="pbt on" onclick="setPB(3)">3</button>
+      <button class="pbt" onclick="setPB(6)">6</button>
+      <button class="pbt" onclick="setPB(9)">9</button>
+      <button class="pbt" onclick="setPB(12)">12</button>
+    </div>
+  </div>
+
+
+  <!-- LIBRARY -->
+  <div class="sec">
+    <span class="sl">SKU Library</span>
+    <span class="sh" id="lib-count"></span>
+  </div>
+  <div class="lib-search">
+    <input type="text" id="lib-q" placeholder="Search SKU or name…" oninput="renderLib()">
+  </div>
+  <div class="lib-cats" id="lib-cats"></div>
+  <div class="lib-grid" id="sku-lib"></div>
+
+  <!-- OPEX -->
+  <div class="sec"><span class="sl">Operating Costs</span><span class="sh">per order · IS-DTC Jul 2024–Oct 2025</span></div>
+  <div class="opx">
+    <div class="ox">
+      <div><div class="ol">Freight out</div><div class="os">IS-DTC actuals · $23.23 avg · 16 months</div></div>
+      <input type="number" id="fOut" value="23.23" step="0.01" oninput="recalc()" style="text-align:right;">
+      <button class="rst" onclick="R('fOut',23.23)">↺</button>
+    </div>
+    <div class="ox">
+      <div><div class="ol">Freight in</div><div class="os">IS-DTC actuals · $5.22 avg · 16 months</div></div>
+      <input type="number" id="fIn" value="5.22" step="0.01" oninput="recalc()" style="text-align:right;">
+      <button class="rst" onclick="R('fIn',5.22)">↺</button>
+    </div>
+    <div class="ox">
+      <div><div class="ol">Packaging</div><div class="os">IS-DTC actuals · $8.52 avg · 16 months</div></div>
+      <input type="number" id="pkg" value="8.52" step="0.01" oninput="recalc()" style="text-align:right;">
+      <button class="rst" onclick="R('pkg',8.52)">↺</button>
+    </div>
+    <div class="ox">
+      <div><div class="ol">Quality testing</div><div class="os">IS-DTC actuals · $1.30 avg · 16 months</div></div>
+      <input type="number" id="qt" value="1.30" step="0.01" oninput="recalc()" style="text-align:right;">
+      <button class="rst" onclick="R('qt',1.30)">↺</button>
+    </div>
+    <div class="ox">
+      <div><div class="ol">Internal fulfillment</div><div class="os">IS-DTC actuals · $18.47 avg · 16 months</div></div>
+      <input type="number" id="ful" value="18.47" step="0.01" oninput="recalc()" style="text-align:right;">
+      <button class="rst" onclick="R('ful',18.47)">↺</button>
+    </div>
+    <div class="ox" style="margin-bottom:2px;">
+      <div><div class="ol">Merchant / CC fees</div><div class="os">IS-DTC actuals · 3.00% avg · 16 months</div></div>
+      <div class="pw"><input type="number" id="mf" value="3.00" step="0.01" oninput="recalc()" style="text-align:right;"><span class="ps">%</span></div>
+      <button class="rst" onclick="R('mf',3.00)">↺</button>
+    </div>
+  </div>
+
+  <!-- ASSUMPTIONS -->
+  <div class="sec">
+    <span class="sl">Assumptions</span>
+    <button class="atog" onclick="toggleA()">show / hide</button>
+  </div>
+  <div id="asump-body" class="asump">
+
+    <div class="asump-group-lbl">SKU Data</div>
+    <div class="ar"><span class="ak">SKU prices</span><span class="av">Median transaction price · Shopify orders export · no COGS column in orders export</span></div>
+    <div class="ar"><span class="ak">SKU COGS — Treats (PT-*) &amp; SUPP-GUT-B</span><span class="av">Exact cost per item · Shopify products export</span></div>
+    <div class="ar"><span class="ak">SKU COGS — FDR bags &amp; all others</span><span class="av">Derived · IS-DTC GS Requests tab · FDR 44.93% · Fresh Frozen 61.48% · Supplements 28%</span></div>
+    <div class="ar"><span class="ak">COGS is fixed vs. offer price</span><span class="av">Product cost doesn't move when you change the sell price. Edit COGS field directly if needed.</span></div>
+
+    <div class="asump-group-lbl" style="margin-top:8px;">Operating Costs — IS-DTC Jul 2024–Oct 2025 weighted avg (26,391 orders)</div>
+    <div class="ar">
+      <span class="ak">Freight out <span class="aflag orange">⚑ HIGH</span></span>
+      <span class="av">$23.23 / order avg · range $15.12–$33.24 · Dec 2024 spike $33.24 · improving in some months but no consistent downtrend</span>
+    </div>
+    <div class="ar">
+      <span class="ak">Freight in</span>
+      <span class="av">$5.22 / order avg · range $0–$17.14 · Aug 2025 spike $17.14 likely bulk inbound shipment</span>
+    </div>
+    <div class="ar">
+      <span class="ak">Packaging <span class="aflag red">⚑ VERIFY</span></span>
+      <span class="av">$8.52 / order avg · range $4.83–$15.94 · spikes Jul 2024 $15.94 and Oct 2025 $12.68 · semi-fixed cost spreading over lower volume · verify with ops what's in this line</span>
+    </div>
+    <div class="ar">
+      <span class="ak">Quality testing</span>
+      <span class="av">$1.30 / order avg · range $0–$3.86 · minor and variable</span>
+    </div>
+    <div class="ar">
+      <span class="ak">Internal fulfillment <span class="aflag orange">⚑ VOLATILE</span></span>
+      <span class="av">$18.47 / order avg · range $9.95–$23.77 · pick/pack labor · high month-to-month variance · Jan–May 2025 was unusually low period ($14.89 avg)</span>
+    </div>
+    <div class="ar">
+      <span class="ak">Merchant / CC fees</span>
+      <span class="av">3.00% of gross avg · range 1.38%–4.14% · payment mix dependent</span>
+    </div>
+
+    <div class="asump-group-lbl" style="margin-top:8px;">Cohort &amp; LTV</div>
+    <div class="ar"><span class="ak">LTV source</span><span class="av">LTV:CAC Dashboard · FDR product revenue only · Jan 2025–Mar 2026 · 2,318 new FDR customers</span></div>
+    <div class="ar"><span class="ak">LTV model — contribution basis</span><span class="av">Repeat contribution = retention% × (Repeat AOV − product COGS − all per-order opex). Same accounting as the waterfall. Breakeven CAC = first-order contribution + cumulative repeat contribution — fully apples-to-apples.</span></div>
+    <div class="ar"><span class="ak">Trial vs. repeat pricing</span><span class="av">Trial price (M0) is in the waterfall. Repeat AOV (sidebar) is what customers pay from M1 onwards. Default $26.96 = most common FDR non-trial subscription price from orders CSV.</span></div>
+    <div class="ar"><span class="ak">FDR cohort retention (% of cohort still ordering)</span><span class="av">M1: 20% · M2: 14% · M3–M5: 13% · M6–M8: 11% · M9–M10: 9% · M11: 8% · M12: 7%</span></div>
+    <div class="ar"><span class="ak">FDR M/M retention (active subscribers)</span><span class="av">~56% avg · range 36–69% · Aug 2025 anomaly (37%) excluded from avg</span></div>
+    <div class="ar"><span class="ak">CAC default</span><span class="av">$150 · trial offer current running rate ~$155 · FDR weighted avg all-time $348 · range $132–$948</span></div>
+    <div class="ar"><span class="ak">⚠ Key assumption</span><span class="av">Trial customers assumed to convert/retain at same rate as regular FDR cohort. Trial-acquired customers may churn faster — treat LTV as ceiling, not floor.</span></div>
+    <div class="ar"><span class="ak">M7 and M9 LTV increments ($46, $47)</span><span class="av">Data artifacts from small cohort samples in those months. Surrounding months M8 ($236) and M10 ($234) are normal.</span></div>
+
+  </div>
+
+</div><!-- /left -->
+
+<!-- ══ RIGHT ══ -->
+<div class="right">
+
+  <!-- SUMMARY CARD -->
+  <div class="sum">
+    <div class="sum-top">
+      <div class="sum-brand">
+        <div class="sum-dot"></div>
+        <div class="sum-tl">
+          <div class="t1">Offer Configuration</div>
+          <div class="t2"><input type="text" class="snm" id="offerName" value="Trial Offer — 16oz FDR" placeholder="Offer name…"></div>
+        </div>
+      </div>
+      <div class="sum-dt" id="sum-dt"></div>
+    </div>
+    <div class="sum-skus" id="sum-skus"><span class="sp-empty">No SKUs configured</span></div>
+    <div class="sum-mets">
+      <div class="sm">
+        <div class="sml">Breakeven CAC</div>
+        <div class="smv" id="s-becac">—</div>
+        <div class="sms" id="s-besub">at <span id="pb-lbl">3</span>-month payback</div>
+      </div>
+      <div class="sdiv"></div>
+      <div class="sm">
+        <div class="sml" id="s-pb-lbl">Payback at $100 CAC</div>
+        <div class="smv" id="s-pbval">—</div>
+        <div class="sms" id="s-pbsub">months to recover</div>
+      </div>
+    </div>
+    <div class="sum-bar">
+      <div class="sb-lbl"><span>LTV recovery vs. total acquisition cost</span><span id="sb-note" style="color:rgba(255,255,255,.35);font-weight:400;"></span></div>
+      <div class="sb-trk"><div class="sb-fill" id="sb-fill" style="width:0%;background:var(--g400);"></div></div>
+      <div class="sb-tks" id="sb-tks"></div>
+    </div>
+    <div class="sum-ft">
+      <span class="sfl" id="s-ft">First-order contribution · Cohort LTV (FDR Apr 25–Mar 26) · Repeat CM%</span>
+      <span class="sfr">Get Joy Offer Modeler</span>
+    </div>
+  </div>
+
+  <!-- WATERFALL -->
+  <div class="card">
+    <div class="ch"><span>P&L Waterfall — per order</span><span id="wf-st"></span></div>
+    <div id="wfall"><div style="padding:18px;text-align:center;color:var(--t3);font-size:11px;">Add SKUs to begin.</div></div>
+  </div>
+
+  <!-- COHORT -->
+  <div class="card">
+    <div class="ch"><span>Cohort LTV — FDR product revenue per acquired customer (repeat only)</span><span style="font-size:9px;color:var(--t3);">LTV:CAC Dashboard · Jan 2025–Mar 2026 · 2,318 customers</span></div>
+    <div class="coh">
+      <div class="chl">
+        <span>Cumulative <strong>contribution</strong> from repeat orders per acquired customer (retention% × repeat contribution per order). Same basis as waterfall — apples to apples. Bars green when cumulative repeat contribution + first-order contribution covers CAC.</span>
+        <span id="coh-note" style="color:var(--g600);font-weight:600;font-size:9px;"></span>
+      </div>
+      <div class="chc" id="coh-chart"></div>
+    </div>
+  </div>
+
+</div><!-- /right -->
+</div>
+
+<script>
+// ── COHORT DATA ────────────────────────────────────────────────────────────────
+// FDR cohort retention % — CR_FDR.wtd.data from LTV:CAC Dashboard (% of original cohort still ordering)
+const FDR_RET=[20,14,13,13,13,11,11,11,9,9,8,7]; // M1–M12
+// Static LTV increments (dashboard actuals, fallback when no SKUs selected)
+const LTV_INC_STATIC=[133,130,147,143,153,196,46,236,47,234,34,94];
+// Compute LTV_CUM in CONTRIBUTION terms (same basis as waterfall contrib)
+// Each month: retention% × (repeat_aov - product_cogs - all_per_order_opex)
+// This ensures beCac = contrib + LTV_CUM is apples-to-apples
+function computeLTV(){
+  const aov  = parseFloat(document.getElementById('repeatAOV')?.value) || 26.96;
+  const fo   = gv('fOut'), fi = gv('fIn'), pkg = gv('pkg'),
+        qt   = gv('qt'),   ful = gv('ful'), mfPct = gv('mf')/100;
+  // Product COGS: use blended per-unit from offer table (total_cogs / total_qty)
+  const totalCogs = offer.length ? offer.reduce((s,i)=>s+i.qty*i.cogs,0) : 8.98;
+  const totalQty  = offer.length ? offer.reduce((s,i)=>s+i.qty,0) : 1;
+  const cogsPerUnit = totalCogs / Math.max(totalQty,1);
+  // Repeat contribution per retained order
+  const repeatContrib = aov - cogsPerUnit - fo - fi - pkg - qt - ful - (aov * mfPct);
+  // Per originally-acquired customer per month = retention% × repeat_contrib
+  const inc = FDR_RET.map(r => (r/100) * repeatContrib);
+  return inc.reduce((a,v,i)=>[...a,(a[i-1]||0)+v],[]);
+}
+
+// Sync repeat AOV to current offer price
+function syncRepeatAOV(){
+  const aov = offer.length ? offer.reduce((s,i)=>s+i.qty*i.price,0) : 26.96;
+  document.getElementById('repeatAOV').value = aov.toFixed(2);
+  recalc();
+}
+ (from orders CSV + IS-DTC financials COGS %) ────────────
+// COGS = category cost % × median price (IS-DTC GS Requests sheet)
+// FFD: 44.93% | FreshFrozen: 61.475% | Treats: 24% | Supplements: 28%
+let CATALOG = [{"sku":"FDR-beef-2oz","name":"Beef / Small (2oz)","price":4.99,"cogs":2.24,"category":"FFD","costPct":0.449268,"orders":78},{"sku":"FD-CHICKEN-16","name":"Chicken / Small (16 oz)","price":19.99,"cogs":8.98,"category":"FFD","costPct":0.449268,"orders":54},{"sku":"FD-BEEF-16","name":"Beef / Small (16 oz)","price":23.7,"cogs":10.65,"category":"FFD","costPct":0.449268,"orders":43},{"sku":"FD-BEEF-32","name":"Beef / Large (32 oz)","price":49.46,"cogs":22.22,"category":"FFD","costPct":0.449268,"orders":40},{"sku":"FD-CHICKEN-32","name":"Chicken / Large (32 oz)","price":49.46,"cogs":22.22,"category":"FFD","costPct":0.449268,"orders":36},{"sku":"PT-Liver","name":"Liver / 1 Bag / Small (4 oz)","price":17.04,"cogs":3.79,"category":"Treats","costPct":0.24,"orders":22,"exactCogs":true},{"sku":"PT-Heart","name":"Heart / 1 Bag / Small (4 oz)","price":18.99,"cogs":3.72,"category":"Treats","costPct":0.24,"orders":15,"exactCogs":true},{"sku":"PT-Kidney","name":"Kidney / 1 Bag / Small (4 oz)","price":16.99,"cogs":3.38,"category":"Treats","costPct":0.24,"orders":12,"exactCogs":true},{"sku":"SINGLE-BEEF-HALFLB","name":"Beef / SINGLE HALF LB","price":6.2,"cogs":3.81,"category":"FreshFrozen","costPct":0.61475,"orders":10},{"sku":"SINGLE-TURKEY-HALFLB","name":"Turkey / SINGLE HALF LB","price":5.9,"cogs":3.63,"category":"FreshFrozen","costPct":0.61475,"orders":10},{"sku":"SINGLE-TURKEY-BEEF-HALFLB","name":"Turkey and Beef / SINGLE HALF LB","price":5.92,"cogs":3.64,"category":"FreshFrozen","costPct":0.61475,"orders":9},{"sku":"SINGLE-BEEF-CHICKEN-HALFLB","name":"Beef and Chicken / SINGLE HALF LB","price":5.92,"cogs":3.64,"category":"FreshFrozen","costPct":0.61475,"orders":7},{"sku":"BEEF-300","name":"Beef / 300g","price":80.0,"cogs":49.18,"category":"FreshFrozen","costPct":0.61475,"orders":5},{"sku":"SINGLE-TURKEY-CHICKEN-HALFLB","name":"Turkey and Chicken / SINGLE HALF LB","price":5.63,"cogs":3.46,"category":"FreshFrozen","costPct":0.61475,"orders":5},{"sku":"SUPP-CALM-B","name":"Calming Chews - 90 CHEWS","price":35.99,"cogs":10.08,"category":"Supplements","costPct":0.28,"orders":5},{"sku":"SUPP-GUT-B","name":"Digestion Chews - 90 CHEWS","price":38.24,"cogs":17.24,"category":"Supplements","costPct":0.28,"orders":5,"exactCogs":true},{"sku":"FD-BEEF-4LB","name":"Beef / 4 lbs","price":91.0,"cogs":40.88,"category":"FFD","costPct":0.449268,"orders":4},{"sku":"FD-CHICKEN-32-6","name":"Chicken / 12 LBS","price":215.76,"cogs":96.93,"category":"FFD","costPct":0.449268,"orders":4},{"sku":"BEEF-CHICKEN-300","name":"Beef and Chicken / 300g","price":75.6,"cogs":46.48,"category":"FreshFrozen","costPct":0.61475,"orders":4},{"sku":"BEEF-HALFLB","name":"Beef / 0.5lb","price":67.35,"cogs":41.4,"category":"FreshFrozen","costPct":0.61475,"orders":4},{"sku":"CHICKEN-110","name":"Chicken / 110g","price":42.5,"cogs":26.13,"category":"FreshFrozen","costPct":0.61475,"orders":4},{"sku":"CHICKEN-350","name":"Chicken / 350g","price":79.2,"cogs":48.69,"category":"FreshFrozen","costPct":0.61475,"orders":4},{"sku":"SINGLE-CHICKEN-HALFLB","name":"Chicken / SINGLE HALF LB","price":6.64,"cogs":4.08,"category":"FreshFrozen","costPct":0.61475,"orders":4},{"sku":"SINGLE-LAMB-BEEF-HALFLB","name":"Lamb and Beef / SINGLE HALF LB","price":11.23,"cogs":6.9,"category":"FreshFrozen","costPct":0.61475,"orders":4},{"sku":"TURKEY-350","name":"Turkey / 350g","price":92.93,"cogs":57.13,"category":"FreshFrozen","costPct":0.61475,"orders":4},{"sku":"FD-BEEF-32-6","name":"Beef / Large (32 oz) / 6 Bags","price":204.97,"cogs":92.09,"category":"FFD","costPct":0.449268,"orders":3},{"sku":"BEEF-CHICKEN-200","name":"Beef and Chicken / 200g","price":56.7,"cogs":34.86,"category":"FreshFrozen","costPct":0.61475,"orders":3},{"sku":"BEEF-CHICKEN-HALFLB","name":"Beef and Chicken / 0.5lb","price":65.78,"cogs":40.44,"category":"FreshFrozen","costPct":0.61475,"orders":3},{"sku":"SINGLE-TURKEY-1LB","name":"Turkey / SINGLE 1LB","price":10.52,"cogs":6.47,"category":"FreshFrozen","costPct":0.61475,"orders":3},{"sku":"SINGLE-TURKEY-BEEF-1LB","name":"Turkey and Beef / SINGLE 1LB","price":7.85,"cogs":4.83,"category":"FreshFrozen","costPct":0.61475,"orders":3},{"sku":"TURKEY-BEEF-200","name":"Turkey and Beef / 200g","price":63.0,"cogs":38.73,"category":"FreshFrozen","costPct":0.61475,"orders":3},{"sku":"TURKEY-BEEF-350","name":"Turkey and Beef / 350g","price":80.39,"cogs":49.42,"category":"FreshFrozen","costPct":0.61475,"orders":3},{"sku":"TURKEY-CHICKEN-200","name":"Turkey and Chicken / 200g","price":60.0,"cogs":36.88,"category":"FreshFrozen","costPct":0.61475,"orders":3},{"sku":"TURKEY-HALFLB","name":"Turkey / 0.5lb","price":56.39,"cogs":34.67,"category":"FreshFrozen","costPct":0.61475,"orders":3},{"sku":"PT-Heart-3","name":"Heart / 3 Bags (Save 16%)","price":43.58,"cogs":10.46,"category":"Treats","costPct":0.24,"orders":3},{"sku":"FD-BEEF-10LB","name":"Beef / 10 LBS","price":203.2,"cogs":91.29,"category":"FFD","costPct":0.449268,"orders":2},{"sku":"FD-BEEF-3LB","name":"Beef / 3 LBS","price":63.62,"cogs":28.58,"category":"FFD","costPct":0.449268,"orders":2},{"sku":"FD-BEEF-8LB","name":"Beef / 8 LBS","price":183.8,"cogs":82.58,"category":"FFD","costPct":0.449268,"orders":2},{"sku":"FD-CHICKEN-4LB","name":"Chicken / 4 lbs","price":93.42,"cogs":41.97,"category":"FFD","costPct":0.449268,"orders":2},{"sku":"BEEF-200","name":"Beef / 200g","price":70.95,"cogs":43.62,"category":"FreshFrozen","costPct":0.61475,"orders":2},{"sku":"BEEF-400","name":"Beef / 400g","price":95.0,"cogs":58.4,"category":"FreshFrozen","costPct":0.61475,"orders":2},{"sku":"LAMB-400","name":"Lamb / 400g","price":112.88,"cogs":69.39,"category":"FreshFrozen","costPct":0.61475,"orders":2},{"sku":"SUPP-JOINT-B","name":"Mobility Chews - 90 CHEWS","price":38.24,"cogs":10.71,"category":"Supplements","costPct":0.28,"orders":2},{"sku":"PT-Liver-16","name":"Liver / 1 Bag / Large (16 oz)","price":62.99,"cogs":15.12,"category":"Treats","costPct":0.24,"orders":2},{"sku":"FD-BEEF-32-3","name":"Beef / Large (32 oz) / 3 Bags","price":114.62,"cogs":51.5,"category":"FFD","costPct":0.449268,"orders":1},{"sku":"FD-CHICKEN-2LB","name":"Chicken / 2 lbs","price":46.71,"cogs":20.99,"category":"FFD","costPct":0.449268,"orders":1},{"sku":"BEEF-350","name":"Beef / 350g","price":88.0,"cogs":54.1,"category":"FreshFrozen","costPct":0.61475,"orders":1},{"sku":"PT-Heart-16","name":"Heart / 1 Bag / Large (16 oz)","price":62.99,"cogs":15.12,"category":"Treats","costPct":0.24,"orders":1},{"sku":"PT-Kidney-3","name":"Kidney / 3 Bags (Save 16%)","price":47.49,"cogs":11.4,"category":"Treats","costPct":0.24,"orders":1},{"sku":"PT-Liver-6","name":"Liver / 6 Bags (Save 20%)","price":82.03,"cogs":19.69,"category":"Treats","costPct":0.24,"orders":1}];
+
+const COST_PCTS = {FFD:0.449268, FreshFrozen:0.61475, Treats:0.24, Supplements:0.28};
+const CATS = ['All','FFD','FreshFrozen','Treats','Supplements'];
+let activeCat = 'All';
+let offer = [];
+let paybackTarget = 3;
+
+// ── INIT ──────────────────────────────────────────────────────────────────────
+function init(){
+  renderCatBtns();
+  renderLib();
+  document.getElementById('sum-dt').textContent = new Date().toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'});
+  document.getElementById('cacCh').addEventListener('change', recalc);
+  renderCohortChart(null);
+  recalc();
+}
+
+// ── CSV UPLOAD ─────────────────────────────────────────────────────────────────
+function loadCSV(input){
+  const file = input.files[0]; if(!file) return;
+  const reader = new FileReader();
+  reader.onload = e => {
+    const lines = e.target.result.split('\n');
+    const header = lines[0].split(',').map(h=>h.replace(/"/g,'').trim());
+    const skuIdx = header.indexOf('Lineitem sku');
+    const nameIdx = header.indexOf('Lineitem name');
+    const priceIdx = header.indexOf('Lineitem price');
+    if(skuIdx<0||priceIdx<0){alert('Not a valid Shopify orders CSV.');return;}
+    const prices={}, names={}, counts={};
+    for(let i=1;i<lines.length;i++){
+      const cols=lines[i].split(',').map(c=>c.replace(/^"|"$/g,'').trim());
+      const sku=cols[skuIdx]; const p=parseFloat(cols[priceIdx]); const nm=cols[nameIdx]||'';
+      if(!sku||isNaN(p)||p<=0) continue;
+      if(!prices[sku]){prices[sku]=[];names[sku]=nm;counts[sku]=0;}
+      prices[sku].push(p); counts[sku]++;
+    }
+    const SKIP_PAT=/transition|SOT-|FAIRE|BOWL|KIT|SAMPLE|TINY/i;
+    const newCat={};
+    Object.keys(prices).forEach(sku=>{
+      if(SKIP_PAT.test(sku)) return;
+      const s=sku.toUpperCase();
+      let cat='FreshFrozen';
+      if(s.startsWith('FD-')||s.startsWith('FDR-')) cat='FFD';
+      else if(s.startsWith('PT-')) cat='Treats';
+      else if(s.startsWith('SUPP-')) cat='Supplements';
+      newCat[sku]=cat;
+    });
+    // Update CATALOG prices and add new SKUs
+    const updated=[]; const seen=new Set();
+    CATALOG.forEach(s=>{
+      if(prices[s.sku]){
+        const arr=prices[s.sku].sort((a,b)=>a-b);
+        const med=arr[Math.floor(arr.length/2)];
+        updated.push({...s,price:+med.toFixed(2),cogs:+(med*COST_PCTS[s.category]).toFixed(2),orders:counts[s.sku]});
+      } else {updated.push(s);}
+      seen.add(s.sku);
+    });
+    Object.keys(prices).forEach(sku=>{
+      if(seen.has(sku)||!newCat[sku]) return;
+      const arr=prices[sku].sort((a,b)=>a-b);
+      const med=arr[Math.floor(arr.length/2)];
+      const cat=newCat[sku];
+      let nm=names[sku];
+      ['Freeze Dried Raw Meals (Fresh Meals) - ','Freeze Dried Raw Meals - ','Fresh Freeze Dried - $0 SKU - ','Superfood Beef Organ Treats - ','Fresh Meals - '].forEach(p=>nm=nm.replace(p,''));
+      if(nm.length>45) nm=nm.slice(0,45);
+      updated.push({sku,name:nm.trim(),price:+med.toFixed(2),cogs:+(med*COST_PCTS[cat]).toFixed(2),category:cat,costPct:COST_PCTS[cat],orders:counts[sku]});
+    });
+    updated.sort((a,b)=>b.orders-a.orders);
+    CATALOG=updated;
+    renderCatBtns(); renderLib(); renderOffer(); recalc();
+    document.getElementById('csv-badge').textContent=file.name.slice(0,15)+'…';
+    document.getElementById('csv-badge').style.background='#FCD34D';
+    document.getElementById('csv-badge').style.color='#92400E';
+  };
+  reader.readAsText(file);
+}
+
+// ── LIBRARY ───────────────────────────────────────────────────────────────────
+function renderCatBtns(){
+  const cats=['All',...new Set(CATALOG.map(s=>s.category))];
+  document.getElementById('lib-cats').innerHTML=cats.map(c=>`<button class="cat-btn${c===activeCat?' on':''}" onclick="setCat('${c}')">${c}</button>`).join('');
+}
+function setCat(c){activeCat=c;renderCatBtns();renderLib();}
+
+function renderLib(){
+  const q=(document.getElementById('lib-q').value||'').toLowerCase();
+  const filtered=CATALOG.filter(s=>{
+    if(activeCat!=='All'&&s.category!==activeCat) return false;
+    if(q&&!s.sku.toLowerCase().includes(q)&&!s.name.toLowerCase().includes(q)) return false;
+    return true;
+  });
+  document.getElementById('lib-count').textContent=`${filtered.length} SKUs`;
+  document.getElementById('sku-lib').innerHTML=filtered.map(s=>{
+    const on=offer.some(o=>o.sku===s.sku);
+    return `<div class="chip${on?' on':''}" onclick="toggleSku('${s.sku}')">
+      <span>${s.name.length>22?s.name.slice(0,22)+'…':s.name}</span>
+      <span class="cp">$${s.price.toFixed(2)}</span>
+    </div>`;
+  }).join('')||'<div style="padding:8px;font-size:10px;color:var(--t3);">No SKUs match filter.</div>';
+}
+
+function toggleSku(sku){
+  const idx=offer.findIndex(o=>o.sku===sku);
+  if(idx>=0) offer.splice(idx,1);
+  else{
+    const s=CATALOG.find(s=>s.sku===sku);
+    if(s) offer.push({...s,qty:1,dp:s.price,dc:s.cogs});
+  }
+  renderOffer(); renderLib(); recalc();
+}
+function clearOffer(){offer=[];renderOffer();renderLib();recalc();}
+
+// ── OFFER LIST ─────────────────────────────────────────────────────────────────
+function renderOffer(){
+  const el=document.getElementById('off-list');
+  if(!offer.length){el.innerHTML='<div class="oe">Select SKUs from the library below.</div>';return;}
+  el.innerHTML=offer.map((item,i)=>`
+    <div class="or">
+      <div>
+        <div class="sn">${item.name.length>24?item.name.slice(0,24)+'…':item.name}
+          <span class="ct ct-${item.category}">${item.category}</span>
+        </div>
+        <div class="sc">${item.sku} · <span class="src-tag">${item.exactCogs ? 'exact · products CSV' : (item.costPct*100).toFixed(1)+'% · IS-DTC'}</span></div>
+      </div>
+      <input type="number" value="${item.qty}" min="1" step="1" oninput="upd(${i},'qty',this.value)" style="text-align:center;">
+      <input type="number" value="${item.price.toFixed(2)}" step="0.01" oninput="upd(${i},'price',this.value)" style="text-align:right;">
+      <input type="number" value="${item.cogs.toFixed(2)}" step="0.01" oninput="upd(${i},'cogs',this.value)" style="text-align:right;">
+      <button class="rst" onclick="rstItem(${i})" title="Reset">↺</button>
+      <button class="xb" onclick="rmItem(${i})">×</button>
+    </div>`).join('');
+}
+function upd(i,f,v){offer[i][f]=parseFloat(v)||0;recalc();}
+function rstItem(i){offer[i].price=offer[i].dp;offer[i].cogs=offer[i].dc;renderOffer();recalc();}
+function rmItem(i){offer.splice(i,1);renderOffer();renderLib();recalc();}
+function R(id,v){document.getElementById(id).value=v;recalc();}
+function gv(id){return parseFloat(document.getElementById(id).value)||0;}
+function toggleA(){const e=document.getElementById('asump-body');e.style.display=e.style.display==='none'?'flex':'none';}
+function setPB(n){paybackTarget=n;document.querySelectorAll('.pbt').forEach(b=>b.classList.toggle('on',parseInt(b.textContent)===n));recalc();}
+
+// ── CALC ──────────────────────────────────────────────────────────────────────
+function recalc(){
+  const ship=gv('shipChg'),cac=gv('cac'),fo=gv('fOut'),fi=gv('fIn'),
+        pkg=gv('pkg'),qt=gv('qt'),ful=gv('ful'),mfPct=gv('mf')/100,
+        ch=document.getElementById('cacCh').value;
+  const prodRev=offer.reduce((s,i)=>s+i.qty*i.price,0);
+  const totRev=prodRev+ship;
+  const prodCogs=offer.reduce((s,i)=>s+i.qty*i.cogs,0);
+  const totCogs=prodCogs+fo+fi+pkg+qt;
+  const grossP=totRev-totCogs;
+  const gmPct=totRev>0?grossP/totRev*100:0;
+  const mfFee=totRev*mfPct;
+  const totVar=mfFee+ful;
+  const contrib=grossP-totVar;
+  const cmPct=totRev>0?contrib/totRev*100:0;
+  const netPL=contrib-cac;
+  // Payback uses dynamic LTV (offer AOV × FDR retention curve)
+  const LTV_CUM=computeLTV();
+  const pbIdx=Math.min(paybackTarget-1,LTV_CUM.length-1);
+  const beCac=contrib+(LTV_CUM[pbIdx]||0);
+  let pbMonth=null;
+  for(let m=1;m<=12;m++){if(contrib+(LTV_CUM[m-1]||0)-cac>=0){pbMonth=m;break;}}
+  renderWF({prodRev,ship,totRev,fo,fi,pkg,qt,totCogs,grossP,gmPct,mfFee,ful,totVar,contrib,cmPct,cac,ch,netPL});
+  renderSum({beCac,pbMonth,cac,ch,contrib,LTV_CUM});
+  renderCohortChart({contrib,cac,LTV_CUM});
+  document.getElementById('s-pb-lbl').textContent=`Payback at $${cac.toFixed(0)} ${ch} CAC`;
+}
+
+// ── WATERFALL ──────────────────────────────────────────────────────────────────
+const F=v=>{const a=Math.abs(v).toFixed(2);return v>=0?`+$${a}`:`-$${a}`;};
+const Pct=v=>`${v>=0?'+':''}${v.toFixed(1)}%`;
+const vc=v=>v>0.5?'pos':v<-0.5?'neg':'amr';
+const bc=v=>v>0.5?'bp':v<-0.5?'bn':'ba';
+function wrow(lbl,val,opts={}){
+  const rc=opts.tot?'wr tot':opts.sub?'wr sub':'wr';
+  const lc=`wl${opts.ind?' ind':''}`;
+  const bd=opts.bdg?`<span class="bdg ${bc(val)}">${opts.bdg}</span>`:'';
+  return `<div class="${rc}"><span class="${lc}">${lbl}${bd}</span><span class="wv ${vc(val)}">${F(val)}</span></div>`;
+}
+function renderWF(d){
+  if(!offer.length){
+    document.getElementById('wfall').innerHTML='<div style="padding:18px;text-align:center;color:var(--t3);font-size:11px;">Add SKUs to begin.</div>';
+    document.getElementById('wf-st').innerHTML='';return;
+  }
+  let h='';
+  h+=wrow('Product revenue',d.prodRev);
+  h+=wrow('Shipping collected',d.ship,{ind:true});
+  h+=wrow('Total revenue',d.totRev,{sub:true});
+  h+='<div class="wd"></div>';
+  offer.forEach(item=>{
+    h+=wrow(`${item.name.length>30?item.name.slice(0,30)+'…':item.name} ×${item.qty}`,-(item.qty*item.cogs),{ind:true});
+  });
+  h+=wrow('Freight out',-d.fo,{ind:true});
+  h+=wrow('Freight in',-d.fi,{ind:true});
+  h+=wrow('Packaging',-d.pkg,{ind:true});
+  h+=wrow('Quality testing',-d.qt,{ind:true});
+  h+='<div class="wd"></div>';
+  h+=wrow('Gross profit',d.grossP,{sub:true,bdg:Pct(d.gmPct)});
+  h+='<div class="wd"></div>';
+  h+=wrow('Merchant / CC fees',-d.mfFee,{ind:true});
+  h+=wrow('Internal fulfillment',-d.ful,{ind:true});
+  h+='<div class="wd"></div>';
+  h+=wrow('Contribution (pre-CAC)',d.contrib,{sub:true,bdg:Pct(d.cmPct)});
+  h+='<div class="wd"></div>';
+  h+=wrow(`CAC — ${d.ch}`,-d.cac,{ind:true});
+  h+='<div class="wd"></div>';
+  h+=wrow('Net P&L per order',d.netPL,{tot:true,bdg:Pct(d.netPL/(d.totRev||1)*100)});
+  document.getElementById('wfall').innerHTML=h;
+  const st=document.getElementById('wf-st');
+  if(d.netPL>0) st.innerHTML='<span style="background:var(--g100);color:var(--g700);padding:2px 8px;border-radius:3px;font-size:9px;font-weight:700;">PROFITABLE</span>';
+  else if(d.netPL>-15) st.innerHTML='<span style="background:var(--a100);color:var(--a600);padding:2px 8px;border-radius:3px;font-size:9px;font-weight:700;">NEAR BREAK-EVEN</span>';
+  else st.innerHTML='<span style="background:var(--r100);color:var(--r600);padding:2px 8px;border-radius:3px;font-size:9px;font-weight:700;">LOSS</span>';
+}
+
+// ── SUMMARY ────────────────────────────────────────────────────────────────────
+function renderSum({beCac,pbMonth,cac,ch,contrib,LTV_CUM}){
+  const skuEl=document.getElementById('sum-skus');
+  if(!offer.length){skuEl.innerHTML='<span class="sp-empty">No SKUs configured</span>';}
+  else{skuEl.innerHTML=offer.map(i=>`<div class="sp${i.category==='FFD'?' main':''}">${i.qty>1?i.qty+'× ':''}${i.name.length>20?i.name.slice(0,20)+'…':i.name} · $${i.price.toFixed(2)}</div>`).join('');}
+  const beEl=document.getElementById('s-becac');
+  if(!offer.length){beEl.textContent='—';beEl.className='smv';}
+  else if(beCac<=0){beEl.textContent=`-$${Math.abs(beCac).toFixed(0)}`;beEl.className='smv neg';}
+  else{beEl.textContent=`$${beCac.toFixed(0)}`;beEl.className=`smv ${beCac>=cac?'pos':'amr'}`;}
+  // Update besub to explain negative
+  const beSubEl=document.getElementById('s-besub');
+  if(offer.length&&beCac<=0){
+    beSubEl.innerHTML=`<span style="color:#FCA5A5;font-size:9px;">first-order loss exceeds ${paybackTarget}-mo cohort LTV — offer can't recover</span>`;
+  } else {
+    beSubEl.innerHTML=`at <span id="pb-lbl">${paybackTarget}</span>-month payback`;
+  }  const pmEl=document.getElementById('s-pbval'),psEl=document.getElementById('s-pbsub');
+  if(!offer.length){pmEl.textContent='—';pmEl.className='smv';psEl.textContent='months to recover';}
+  else if(!pbMonth){pmEl.textContent='>12';pmEl.className='smv neg';psEl.textContent='beyond cohort data (12 mo)';}
+  else{pmEl.textContent=pbMonth;pmEl.className=`smv ${pbMonth<=paybackTarget?'pos':pbMonth<=6?'amr':'neg'}`;psEl.textContent=`month${pbMonth===1?'':'s'} · target ${paybackTarget}`;}
+  const pct=pbMonth?Math.min(pbMonth/12*100,100):100;
+  const fill=document.getElementById('sb-fill');
+  fill.style.width=offer.length?`${pct}%`:'0%';
+  fill.style.background=!offer.length?'rgba(255,255,255,.1)':!pbMonth?'#FCA5A5':pbMonth<=paybackTarget?'var(--g400)':pbMonth<=6?'#FCD34D':'#FCA5A5';
+  document.getElementById('sb-tks').innerHTML=[1,2,3,4,5,6,7,8,9,10,11,12].map(m=>`<span class="sb-tk${m===pbMonth?' hi':''}">${m}</span>`).join('');
+  document.getElementById('sb-note').textContent=pbMonth?`Month ${pbMonth}`:'';
+  document.getElementById('s-ft').textContent=offer.length&&beCac>0?`Breakeven CAC $${beCac.toFixed(0)} · first-order contribution $${contrib.toFixed(2)} · FDR repeat LTV · LTV:CAC Dashboard Jan 25–Mar 26`:'FDR product-only repeat LTV · M0 excluded · LTV:CAC Dashboard Jan 2025–Mar 2026';
+}
+
+// ── COHORT CHART ───────────────────────────────────────────────────────────────
+function renderCohortChart(d){
+  const LTV_CUM=d.LTV_CUM||computeLTV();
+  const max=LTV_CUM[LTV_CUM.length-1];
+  let beM=null;
+  if(d&&d.contrib!==undefined){
+    const need=d.cac-d.contrib;
+    for(let m=0;m<LTV_CUM.length;m++){if(LTV_CUM[m]>=need){beM=m;break;}}
+  }
+  document.getElementById('coh-chart').innerHTML=LTV_CUM.map((cum,i)=>{
+    const h=Math.max(cum/max*100,4);
+    const recovered=d&&d.contrib!==undefined&&LTV_CUM[i]>=(d.cac-d.contrib);
+    const bg=recovered?'var(--g500)':'var(--g200)';
+    return `<div class="cbw"><div class="cb" style="height:${h}%;background:${bg};" title="M${i+1}: $${cum.toFixed(0)} cumulative repeat · $${LTV_INC[i].toFixed(0)} this month"></div><span class="cm">M${i+1}</span></div>`;
+  }).join('');
+  document.getElementById('coh-note').textContent=d&&d.contrib!==undefined?(beM!==null?`Raw cohort LTV covers acquisition hole at month ${beM}`:'Not recovered within 12 months'):'';
+}
+
+init();
+</script>
+</body>
+</html>
