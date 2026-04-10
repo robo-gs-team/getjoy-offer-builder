@@ -77,6 +77,13 @@ select:focus{outline:none;border-color:var(--g500);}
 .oe{padding:22px;text-align:center;color:var(--t3);font-size:11px;font-weight:500;}
 .src-tag{font-size:8px;color:var(--g600);font-weight:600;}
 
+/* ORDER PHASE PILLS */
+.phase-pill{font-size:8px;font-weight:800;letter-spacing:.1em;text-transform:uppercase;padding:2px 7px;border-radius:3px;flex-shrink:0;}
+.phase-pill.p1{background:var(--g100);color:var(--g700);}
+.phase-pill.p2{background:#EDE9FE;color:#5B21B6;}
+/* 2nd-order section gets a subtle left-side accent */
+.repeat-group{border-left:2px solid #C4B5FD;}
+
 /* SHIP/CAC */
 .scr{display:grid;grid-template-columns:1fr 74px 22px;gap:4px;align-items:center;padding:7px 12px;border-bottom:1px solid var(--bdr2);}
 .sl2{font-size:11px;font-weight:600;color:var(--t1);}
@@ -224,8 +231,12 @@ select:focus{outline:none;border-color:var(--g500);}
 <!-- ══ LEFT ══ -->
 <div class="left">
 
+  <!-- ══ 1ST ORDER ══ -->
   <div class="sec" style="border-top:none;">
-    <span class="sl">Active Offer</span>
+    <div style="display:flex;align-items:center;gap:7px;">
+      <span class="phase-pill p1">1st Order</span>
+      <span class="sl">Active Offer</span>
+    </div>
     <button class="clr" onclick="clearOffer()">Clear all</button>
   </div>
   <div class="oh">
@@ -234,29 +245,43 @@ select:focus{outline:none;border-color:var(--g500);}
     <span></span><span></span>
   </div>
   <div id="off-list"><div class="oe">Select SKUs from the library below.</div></div>
+  <div class="scr">
+    <div><div class="sl2">Shipping charged</div><div class="ss">Charged to customer on 1st order · CSV avg $9.14</div></div>
+    <input type="number" id="shipChg" value="9.99" step="0.01" oninput="recalc()" style="text-align:right;">
+    <button class="rst" onclick="R('shipChg',9.99)">↺</button>
+  </div>
+  <div class="scr" style="border-bottom:none;">
+    <div style="display:flex;align-items:center;gap:6px;">
+      <div><div class="sl2">CAC</div><div class="ss">Acquisition cost per customer</div></div>
+      <select id="cacCh"><option>Meta</option><option>Google</option><option>Email</option><option>Organic</option></select>
+    </div>
+    <input type="number" id="cac" value="150" step="1" oninput="recalc()" style="text-align:right;">
+    <button class="rst" onclick="R('cac',150)">↺</button>
+  </div>
 
-  <!-- SHIP + CAC -->
-  <div>
+  <!-- ══ 2ND+ ORDER ══ -->
+  <div class="sec">
+    <div style="display:flex;align-items:center;gap:7px;">
+      <span class="phase-pill p2">2nd+ Order</span>
+      <span class="sl">Repeat Economics</span>
+    </div>
+  </div>
+  <div class="repeat-group">
     <div class="scr">
-      <div><div class="sl2">Shipping charged</div><div class="ss">CSV avg $9.14 · most orders $9.99</div></div>
-      <input type="number" id="shipChg" value="9.99" step="0.01" oninput="recalc()" style="text-align:right;">
-      <button class="rst" onclick="R('shipChg',9.99)">↺</button>
-    </div>
-    <div class="scr" style="border-bottom:none;">
-      <div style="display:flex;align-items:center;gap:6px;">
-        <div><div class="sl2">CAC</div><div class="ss">Acquisition cost per customer</div></div>
-        <select id="cacCh"><option>Meta</option><option>Google</option><option>Email</option><option>Organic</option></select>
-      </div>
-      <input type="number" id="cac" value="150" step="1" oninput="recalc()" style="text-align:right;">
-      <button class="rst" onclick="R('cac',150)">↺</button>
-    </div>
-    <div class="scr" style="border-bottom:none;">
       <div>
-        <div class="sl2">Repeat order AOV <span style="font-size:9px;font-weight:400;color:var(--g600);">post-trial</span></div>
-        <div class="ss">What customers pay on repeat/subscription · ↺ syncs to offer price</div>
+        <div class="sl2">Repeat order AOV <span style="font-size:9px;font-weight:400;color:var(--g600);">product only</span></div>
+        <div class="ss">Product revenue on repeat/subscription orders · ↺ syncs to offer price</div>
       </div>
       <input type="number" id="repeatAOV" value="26.96" step="0.01" oninput="recalc()" style="text-align:right;">
       <button class="rst" onclick="syncRepeatAOV()" title="Sync to offer price">↺</button>
+    </div>
+    <div class="scr" style="border-bottom:none;">
+      <div>
+        <div class="sl2">Repeat shipping charged</div>
+        <div class="ss">Shipping billed on 2nd+ orders · typically full rate</div>
+      </div>
+      <input type="number" id="repeatShip" value="9.99" step="0.01" oninput="recalc()" style="text-align:right;">
+      <button class="rst" onclick="R('repeatShip',9.99)">↺</button>
     </div>
   </div>
 
@@ -445,15 +470,18 @@ const LTV_INC_STATIC=[133,130,147,143,153,196,46,236,47,234,34,94];
 // Each month: retention% × (repeat_aov - product_cogs - all_per_order_opex)
 // This ensures beCac = contrib + LTV_CUM is apples-to-apples
 function computeLTV(){
-  const aov  = parseFloat(document.getElementById('repeatAOV')?.value) || 26.96;
+  const aov     = parseFloat(document.getElementById('repeatAOV')?.value) || 26.96;
+  const repShip = parseFloat(document.getElementById('repeatShip')?.value) || 0;
   const fo   = gv('fOut'), fi = gv('fIn'), pkg = gv('pkg'),
         qt   = gv('qt'),   ful = gv('ful'), mfPct = gv('mf')/100;
   // Product COGS: use blended per-unit from offer table (total_cogs / total_qty)
   const totalCogs = offer.length ? offer.reduce((s,i)=>s+i.qty*i.cogs,0) : 8.98;
   const totalQty  = offer.length ? offer.reduce((s,i)=>s+i.qty,0) : 1;
   const cogsPerUnit = totalCogs / Math.max(totalQty,1);
-  // Repeat contribution per retained order
-  const repeatContrib = aov - cogsPerUnit - fo - fi - pkg - qt - ful - (aov * mfPct);
+  // Repeat total revenue = product AOV + shipping charged on repeat orders
+  const repTotRev = aov + repShip;
+  // Repeat contribution per retained order (merchant fee applied to full repeat revenue)
+  const repeatContrib = repTotRev - cogsPerUnit - fo - fi - pkg - qt - ful - (repTotRev * mfPct);
   // Per originally-acquired customer per month = retention% × repeat_contrib
   const inc = FDR_RET.map(r => (r/100) * repeatContrib);
   return inc.reduce((a,v,i)=>[...a,(a[i-1]||0)+v],[]);
