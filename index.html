@@ -656,8 +656,13 @@ function recalc(){
   const LTV_CUM=computeLTV();
   const pbIdx=Math.min(paybackTarget-1,LTV_CUM.length-1);
   const beCac=contrib+(LTV_CUM[pbIdx]||0);
+  // pbMonth: 0 = 1st order alone covers CAC; null = never/not found within 12 mo
   let pbMonth=null;
-  for(let m=1;m<=12;m++){if(contrib+(LTV_CUM[m-1]||0)-cac>=0){pbMonth=m;break;}}
+  if(contrib>=cac){
+    pbMonth=0; // first-order contribution already covers acquisition cost
+  } else {
+    for(let m=1;m<=12;m++){if(contrib+(LTV_CUM[m-1]||0)-cac>=0){pbMonth=m;break;}}
+  }
   renderWF({prodRev,ship,totRev,fo,fi,pkg,qt,totCogs,grossP,gmPct,mfFee,ful,totVar,contrib,cmPct,cac,ch,netPL});
   renderSum({beCac,pbMonth,cac,ch,contrib,LTV_CUM});
   renderCohortChart({contrib,cac,LTV_CUM});
@@ -726,15 +731,27 @@ function renderSum({beCac,pbMonth,cac,ch,contrib,LTV_CUM}){
   } else {
     beSubEl.innerHTML=`at <span id="pb-lbl">${paybackTarget}</span>-month payback`;
   }  const pmEl=document.getElementById('s-pbval'),psEl=document.getElementById('s-pbsub');
-  if(!offer.length){pmEl.textContent='—';pmEl.className='smv';psEl.textContent='months to recover';}
-  else if(!pbMonth){pmEl.textContent='>12';pmEl.className='smv neg';psEl.textContent='beyond cohort data (12 mo)';}
-  else{pmEl.textContent=pbMonth;pmEl.className=`smv ${pbMonth<=paybackTarget?'pos':pbMonth<=6?'amr':'neg'}`;psEl.textContent=`month${pbMonth===1?'':'s'} · target ${paybackTarget}`;}
-  const pct=pbMonth?Math.min(pbMonth/12*100,100):100;
+  if(!offer.length){
+    pmEl.textContent='—';pmEl.className='smv';psEl.textContent='months to recover';
+  } else if(pbMonth===0){
+    pmEl.textContent='<1';pmEl.className='smv pos';psEl.textContent='1st order covers full CAC';
+  } else if(pbMonth===null){
+    // Distinguish: negative repeat contrib = will NEVER recover vs. just slow (>12 mo)
+    const neverRecovers=LTV_CUM.length>0&&LTV_CUM[0]<0;
+    pmEl.textContent=neverRecovers?'∞':'>12';
+    pmEl.className='smv neg';
+    psEl.textContent=neverRecovers?'repeat orders reduce margin — will never recover':'beyond 12-month cohort window';
+  } else {
+    pmEl.textContent=pbMonth;
+    pmEl.className=`smv ${pbMonth<=paybackTarget?'pos':pbMonth<=6?'amr':'neg'}`;
+    psEl.textContent=`month${pbMonth===1?'':'s'} · target ${paybackTarget}`;
+  }
+  const pct=pbMonth===0?100:pbMonth!==null?Math.min(pbMonth/12*100,100):100;
   const fill=document.getElementById('sb-fill');
   fill.style.width=offer.length?`${pct}%`:'0%';
-  fill.style.background=!offer.length?'rgba(255,255,255,.1)':!pbMonth?'#FCA5A5':pbMonth<=paybackTarget?'var(--g400)':pbMonth<=6?'#FCD34D':'#FCA5A5';
+  fill.style.background=!offer.length?'rgba(255,255,255,.1)':pbMonth===null?'#FCA5A5':pbMonth===0||pbMonth<=paybackTarget?'var(--g400)':pbMonth<=6?'#FCD34D':'#FCA5A5';
   document.getElementById('sb-tks').innerHTML=[1,2,3,4,5,6,7,8,9,10,11,12].map(m=>`<span class="sb-tk${m===pbMonth?' hi':''}">${m}</span>`).join('');
-  document.getElementById('sb-note').textContent=pbMonth?`Month ${pbMonth}`:'';
+  document.getElementById('sb-note').textContent=pbMonth===0?'1st order':pbMonth!==null?`Month ${pbMonth}`:'';
   document.getElementById('s-ft').textContent=offer.length&&beCac>0?`Breakeven CAC $${beCac.toFixed(0)} · first-order contribution $${contrib.toFixed(2)} · FDR repeat LTV · LTV:CAC Dashboard Jan 25–Mar 26`:'FDR product-only repeat LTV · M0 excluded · LTV:CAC Dashboard Jan 2025–Mar 2026';
 }
 
