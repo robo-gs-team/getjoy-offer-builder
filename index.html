@@ -663,10 +663,10 @@ function recalc(){
   } else {
     for(let m=1;m<=12;m++){if(contrib+(LTV_CUM[m-1]||0)-cac>=0){pbMonth=m;break;}}
   }
+  document.getElementById('s-pb-lbl').textContent=`Payback at $${cac.toFixed(0)} ${ch} CAC`;
   renderWF({prodRev,ship,totRev,fo,fi,pkg,qt,totCogs,grossP,gmPct,mfFee,ful,totVar,contrib,cmPct,cac,ch,netPL});
   renderSum({beCac,pbMonth,cac,ch,contrib,LTV_CUM});
   renderCohortChart({contrib,cac,LTV_CUM});
-  document.getElementById('s-pb-lbl').textContent=`Payback at $${cac.toFixed(0)} ${ch} CAC`;
 }
 
 // ── WATERFALL ──────────────────────────────────────────────────────────────────
@@ -757,20 +757,22 @@ function renderSum({beCac,pbMonth,cac,ch,contrib,LTV_CUM}){
 
 // ── COHORT CHART ───────────────────────────────────────────────────────────────
 function renderCohortChart(d){
-  const LTV_CUM=d.LTV_CUM||computeLTV();
+  const LTV_CUM=(d&&d.LTV_CUM)||computeLTV();
   const max=LTV_CUM[LTV_CUM.length-1];
   let beM=null;
   if(d&&d.contrib!==undefined){
     const need=d.cac-d.contrib;
     for(let m=0;m<LTV_CUM.length;m++){if(LTV_CUM[m]>=need){beM=m;break;}}
   }
+  const absMax=Math.max(Math.abs(max),0.01);
   document.getElementById('coh-chart').innerHTML=LTV_CUM.map((cum,i)=>{
-    const h=Math.max(cum/max*100,4);
+    const inc=i===0?cum:cum-LTV_CUM[i-1];
+    const h=Math.max(Math.abs(cum)/absMax*100,4);
     const recovered=d&&d.contrib!==undefined&&LTV_CUM[i]>=(d.cac-d.contrib);
-    const bg=recovered?'var(--g500)':'var(--g200)';
-    return `<div class="cbw"><div class="cb" style="height:${h}%;background:${bg};" title="M${i+1}: $${cum.toFixed(0)} cumulative repeat · $${LTV_INC[i].toFixed(0)} this month"></div><span class="cm">M${i+1}</span></div>`;
+    const bg=recovered?'var(--g500)':cum<0?'var(--r500)':'var(--g200)';
+    return `<div class="cbw"><div class="cb" style="height:${h}%;background:${bg};" title="M${i+1}: $${cum.toFixed(0)} cumulative · $${inc.toFixed(0)} this month"></div><span class="cm">M${i+1}</span></div>`;
   }).join('');
-  document.getElementById('coh-note').textContent=d&&d.contrib!==undefined?(beM!==null?`Raw cohort LTV covers acquisition hole at month ${beM}`:'Not recovered within 12 months'):'';
+  document.getElementById('coh-note').textContent=d&&d.contrib!==undefined?(beM!==null?`Repeat contribution covers acquisition hole at M${beM+1}`:'Not recovered within 12 months'):'';
 }
 
 init();
